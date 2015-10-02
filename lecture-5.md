@@ -2,9 +2,10 @@
 
 Wednesday, September 30, 2015
 
-# Warning: these notes are not complete
-
 ## Announcements
+
+* If you are on the wait list: submit homework by deadline.  We will grade
+  if/when you make it into the class.
 
 * We will be using [GitHub][GitHub] for version control and managing assignment
   submissions in this course. If you haven't already done so, please create a
@@ -31,7 +32,7 @@ Wednesday, September 30, 2015
 
 ## Farmshare review
 
-Your first assignment must run on and be submitted throught the farmshare
+Your first assignment must run on and be submitted through the farmshare
 servers.  Let's walk through the process of creating a Python script and data
 file locally then move it over to farmshare.  We will use the same conventions
 as homework 1.
@@ -116,7 +117,7 @@ for word, count in word_dict.items():
 ### Test the script locally:
 
 ```
-nwh-mbpro:lec5 nwh$ python count_words.py 
+nwh-mbpro:lec5 nwh$ python count_words.py
 'a' appeared 2 time(s)
 'rainy' appeared 1 time(s)
 'short' appeared 1 time(s)
@@ -153,7 +154,7 @@ nwh-mbpro:lec5 nwh$ ssh nwh@corn.stanford.edu
 nwh@corn26:~$ cd CME211/lec5/
 nwh@corn26:~/CME211/lec5$ ls
 count_words.py	words.txt
-nwh@corn26:~/CME211/lec5$ python count_words.py 
+nwh@corn26:~/CME211/lec5$ python count_words.py
 'a' appeared 2 time(s)
 'rainy' appeared 1 time(s)
 'short' appeared 1 time(s)
@@ -163,8 +164,8 @@ nwh@corn26:~/CME211/lec5$ python count_words.py
 'file' appeared 1 time(s)
 'day' appeared 1 time(s)
 # edit the data file
-nwh@corn26:~/CME211/lec5$ emacs words.txt 
-nwh@corn26:~/CME211/lec5$ python count_words.py 
+nwh@corn26:~/CME211/lec5$ emacs words.txt
+nwh@corn26:~/CME211/lec5$ python count_words.py
 'a' appeared 2 time(s)
 'rainy' appeared 4 time(s)
 'short' appeared 1 time(s)
@@ -190,7 +191,7 @@ Enter a passcode or select one of the following options:
  3. SMS passcodes to XXX-XXX-2441
 
 Passcode or option (1-3): 1
-test.txt                                              100%   50     0.1KB/s   00:00    
+test.txt                                              100%   50     0.1KB/s   00:00
 nwh-mbpro:lec5 nwh$
 ```
 
@@ -200,7 +201,7 @@ See `$ man scp`
 
 ```
 nwh-mbpro:lec5 nwh$ sftp nwh@corn.stanford.edu
-nwh@corn.stanford.edu's password: 
+nwh@corn.stanford.edu's password:
 Authenticated with partial success.
 Duo two-factor login for nwh
 
@@ -244,381 +245,342 @@ version                            Show SFTP version
 !command                           Execute 'command' in local shell
 !                                  Escape to local shell
 ?                                  Synonym for help
-sftp> 
+sftp>
 ```
 
-http://linuxcommand.org/lc3_learning_the_shell.php
+### Other software
+
+See <https://itservices.stanford.edu/service/ess/> for Mac and Windows SFTP and
+AFS clients.
+
+Text editors:
+
+* emacs
+* vim
+* [TextWrangler](http://www.barebones.com/products/textwrangler/)
+* [Sublime Text](http://www.sublimetext.com/)
+* [Atom](https://atom.io/)
+
+Key: learn a tool, learn it well
+
+Note: very helpful to become comfortable with a text editor you can use from the
+terminal.
+
+### Learn more about unix systems and interacting with the shell
+
+William E. Shotts, Jr. has a very nice online book called **The Linux Command
+Line**.  See the book online:
+
+* <http://linuxcommand.org/lc3_learning_the_shell.php>
+
+Only need to focus on "Learning the Shell".  In CME 211, we are not concerned
+with writing shell scripts.
+
+## A note on Python variables
+
+It is bad practice to define a variable inside of a conditional or loop body and
+then reference it outside:
+
+```py
+>>> name = "Nick"
+>>> if name == "Nick":
+...     age = 45
+...
+>>> print("Nick's age is {}".format(age))
+Nick's age is 45
+>>>
+```
+
+If `name` holds a different name, the following will happen:
+
+```py
+>>> name = "Bob"
+>>> if name == "Nick":
+...     age = 45
+...
+>>> print("Nick's age is {}".format(age))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'age' is not defined
+>>>
+```
+
+Good practice to define/initialize variables at the same level they will be
+used:
+
+```py
+>>> name = "Bob"
+>>> age = None
+>>> if name == "Nick":
+...     age = 45
+...
+>>> print("Nick's age is {}".format(age))
+Nick's age is None
+>>>
+```
+
+Note in the above example, it may be more appropriate to initialize the `age`
+variable to a more meaningful value.
+
+We will learn about *scope* when we talk about functions on Friday.
 
 ## Analysis of algorithms
 
-* Time complexity: How does the
+Key questions when considering the performance of algorithms:
 
-number of operations in an algorithm scale
-with the size of the input?
+* **Time complexity**: How does the number of operations in an algorithm scale with
+the size of the input?
 
-
-* Space complexity: How do the storage
-requirements of the algorithm scale?
-
-
-3
-
+* **Space complexity**: How do the storage requirements of the algorithm scale?
 
 ## Empirical approach
 
-import random!
-import sys!
-import time!
-!
-if len(sys.argv) < 2:!
-print 'Usage:'!
-print ' %s nvalues' % sys.argv[0]!
-!
-n = int(sys.argv[1])!
-!
-# Setup a list of random values and record the time required to sort it!
-v = random.sample(xrange(n), n)!
-t0 = time.time()!
-v.sort()!
-t1 = time.time()!
-!
-print "Sorting %d values took %.3f seconds." % (n, t1-t0)!
+Let's measure the running time of Pythons `sort` method on a random list of
+integers.  See `lecture-5/listsort.py`:
 
-listsort.py!
+```py
+import random
+import sys
+import time
 
-4
+if len(sys.argv) < 2:
+print 'Usage:'
+print ' %s nvalues' % sys.argv[0]
 
+n = int(sys.argv[1])
+
+# Setup a list of random values and record the time required to sort it
+v = random.sample(xrange(n), n)
+t0 = time.time()
+v.sort()
+t1 = time.time()
+
+print "Sorting %d values took %.3f seconds." % (n, t1-t0)
+```
 
 ## Empirical approach
 
-plegresl@corn16:~/CME211/Lecture05$ python listsort.py
-Sorting 1000000 values took 0.794 seconds.!
-plegresl@corn16:~/CME211/Lecture05$ python listsort.py
-Sorting 2000000 values took 1.854 seconds.!
-plegresl@corn16:~/CME211/Lecture05$ python listsort.py
-Sorting 4000000 values took 4.334 seconds.!
-plegresl@corn16:~/CME211/Lecture05$ python listsort.py
-Sorting 8000000 values took 9.695 seconds.!
-plegresl@corn16:~/CME211/Lecture05$ python listsort.py
-Sorting 16000000 values took 22.484 seconds.!
-plegresl@corn16:~/CME211/Lecture05$ !
+Let's run the script with increasing list length:
 
-5
-
-
-1000000!
-2000000!
-4000000!
-8000000!
-16000000!
+```
+[nwh@icme-nwh lecture-5] $ python listsort.py
+Usage:
+ listsort.py nvalues
+[nwh@icme-nwh lecture-5] $ python listsort.py 1000000
+Sorting %d values took %.3f seconds.
+[nwh@icme-nwh lecture-5] $ python listsort.py 2000000
+Sorting 2000000 values took 1.12 seconds.
+[nwh@icme-nwh lecture-5] $ python listsort.py 4000000
+Sorting 4000000 values took 2.49 seconds.
+[nwh@icme-nwh lecture-5] $ python listsort.py 8000000
+Sorting 8000000 values took 5.41 seconds.
+[nwh@icme-nwh lecture-5] $ python listsort.py 16000000
+Sorting 16000000 values took 11.9 seconds.
+[nwh@icme-nwh lecture-5] $
+```
 
 ## Problems with empirical
 
+Empirical performance testing is an important endeavor.  It is an apect of
+"profiling" your code to see what parts take longer.  Empirical performance
+testing has some drawbacks, namely:
+
 * Results are computer dependent
 
-* You need to have the code before you can
-do the analysis
-
-
-6
-
+* You need to have the code before you can do the analysis
 
 ## Time complexity
 
-* Estimate of the number of operations as a
+* Estimate of the number of operations as a function of the input size (usually
+  denoted as `n`)
 
-function of the input size (usually denoted as n)
+* Input size examples:
 
+    * length of list
 
-* Typically characterized in terms of Big O
+    * for an `m` by `m` matrix, we say the input size is `m` even though the
+      matrix as `m^2` entries
+    
+    * number of non-zero entries in a sparse matrix
 
-notation, e.g. an algorithm is O(n log n) or O(n2)
+    * number of nodes in a graph or network structure
 
-O(1)
+* Typically characterized in terms of Big O notation, e.g. an algorithm is
+  `O(n log n)` or `O(n^2)`.
 
-O(log n)
-
-O(n)
-
-O(n log n)
-
-O(n2)
-
-
-Constant time
-
-Logarithmic time
-
-Linear time
-
-Linearithmitic time
-
-Quadratic time
-
-7
-
+```
+| order notation | in English          |
+|----------------+---------------------|
+| O(1)           | Constant time       |
+| O(log n)       | Logarithmic time    |
+| O(n)           | Linear time         |
+| O(n log n)     | Linearithmitic time |
+| O(n^2)         | Quadratic time      |
+```
 
 ## Visualization
 
-
-8
-
+![order chart](lecture-5/order-chart.png)
 
 ## Big O notation
 
-* Big O notation represents growth rate of a
-
-function in the limit of argument going to infinity
-
+* Big O notation represents growth rate of a function in the limit of argument
+  going to infinity
 
 * Excludes coefficients and lower order terms
 
-2n2 + 64n
+```
+2n^22 + 64n -> O(n^2)
+```
 
-e
-
-O(n2)
-
-
-
-
-* Often some simplifying assumptions will need to
-be made about the nature of the input data
-
-
-9
-
+* Often some simplifying assumptions will need to be made about the nature of
+  the input data in order to carry out analysis
 
 ## Linear algebra examples
 
-* Adding two vectors? O(n)
+* Adding two vectors? `O(n)`
 
-* Multiplying two matrices? Assuming the
-matrices are both n x n, it's O(n3)
+```py
+# c = a + b
+# assume all the same length
+n = len(a)
+for i in xrange(n):
+    c[i] = a[i] + b[i]
+```
+
+* Multiplying two matrices? Assuming the matrices are both `n x n`, it's
+  `O(n^3)`
+
+```py
+# assume all matrices are n x n
+# indexing notation below comes from numpy
+# this will not work with standard python
+# C = A*B
+for i in xrange(n):
+    for j in xrange(n):
+        C[i,j] = 0
+        for k in xrange(n):
+            C[i,j] += A[i,k]*B[k,j]
+```
 
 
-[][] []
-=
+![matmul](lecture-5/matrix.png)
 
-
-n x n
-
-
-n x n
-
-
-n x n
-
-
-Computing one value in the output matrix requires O(n)
-operations, and there are n2 values in the output matrix.
-
-10
-
+Computing one value in the output matrix requires `O(n)`
+operations, and there are `n^2` values in the output matrix.
 
 ## Linear search
 
-Find the number x in your data:
+*Linear search* is searching through a sequential data container for a specified
+item.  An example of this is finding the start index of a given sub-string in a
+longer string.
 
+Exercise: Find the number `x` in your data:
 
-4
+```
+|---+----+-----+----+-----+----+-----+-----|
+| 4 | 17 | 100 | 73 | 120 | 42 | 999 | -17 |
+|---+----+-----+----+-----+----+-----+-----|
+```
 
-
-17
-
-
-100
-
-
-73
-
-
-120
-
-
-42
-
-
-999
-
-
--17
-
-
-Is it O(1), or O(n), or something else?
-
-
-11
-
+Is it `O(1)`, or `O(n)`, or something else?
 
 ## Linear search: best and worst case
 
+```
+|---+----+-----+----+-----+----+-----+-----|
+| 4 | 17 | 100 | 73 | 120 | 42 | 999 | -17 |
+|---+----+-----+----+-----+----+-----+-----|
 
-4
+  ^                                     ^
+  |                                     |
+ O(1)                                  O(n)
+```
 
+* Best case: `x = 4` and we find the index with only one comparison
 
-17
-
-
-100
-
-
-73
-
-
-120
-
-
-Best case: O(1)
-
-
-42
-
-
-999
-
-
--17
-
-
-Worst case: O(n)
-
-
-12
-
+* Worst case: `x = -17` and we scan the entire list to find the last element
 
 ## Linear search: average case
 
+```
+|---+----+-----+----+-----+----+-----+-----|
+| 4 | 17 | 100 | 73 | 120 | 42 | 999 | -17 |
+|---+----+-----+----+-----+----+-----+-----|
+             
+                    ^
+                    |
+                  O(n/2)
+```
 
-4
-
-
-17
-
-
-100
-
-
-73
-
-
-120
-
-
-Average case: O(n/2)
-
-13
-
-
-42
-
-
-e
-
-999
-
-
-O(n)
-
-
--17
-
+Given random data and a random input (in the range of the data) we can **on
+average** expect to search through half of the list.  This would be `O(n/2)`.
+Remember that Big O notation is not concerned with constant terms, so this
+becomes `O(n)`.
 
 ## Binary search algorithm
 
-Find 17:
+I we know that the list is sorted, we can apply binary search.  Let's look at an example
 
--17
+**Goal**: Find the index of `17` in the following list:
 
+```
+|-----+---+----+----+----+-----+-----+-----|
+| -17 | 4 | 17 | 42 | 73 | 100 | 120 | 999 |
+|-----+---+----+----+----+-----+-----+-----|
+```
 
-4
+Start by looking half way through the list:
 
+```
+|-----+---+----+----+----+-----+-----+-----|
+| -17 | 4 | 17 | 42 | 73 | 100 | 120 | 999 |
+|-----+---+----+----+----+-----+-----+-----|
+                  ^
+                  U
+```
 
-17
+`42` is not `17`, but `42` is greater than `17` so continue searching the left
+(lower) part of the list.  The index associated with `42` becomes an upper bound
+on the search.
 
+```
+|-----+---+----+----+----+-----+-----+-----|
+| -17 | 4 | 17 | 42 | 73 | 100 | 120 | 999 |
+|-----+---+----+----+----+-----+-----+-----|
+        ^         ^
+        L         U
+```
 
-42
+`4` is not `17`, but `4` is less than `17` so continue searching to the right
+part of the list up to the upper bound.  Turns out in this example that we only
+have one entry to inspect:
 
+```
+|-----+---+----+----+----+-----+-----+-----|
+| -17 | 4 | 17 | 42 | 73 | 100 | 120 | 999 |
+|-----+---+----+----+----+-----+-----+-----|
+        ^   ^     ^
+        L   *     U
+```
 
-73
+We have found `17`.  It is time to celebrate and return the index of `2`.
+(Remember Python uses 0-based indexing.)
 
+## Summary: Binary search
 
-100
+* Requires that the data first be sorted, but then:
 
+    * Best case: `O(1)`
 
-120
+    * Average case: `O(log n)`
 
-
-999
-
-
--17
-
-
-4
-
-
-17
-
-
-42
-
-
-73
-
-
-100
-
-
-120
-
-
-999
-
-
--17
-
-
-4
-
-
-17
-
-
-42
-
-
-73
-
-
-100
-
-
-120
-
-
-999
-
-
-14
-
-
-## Binary search
-
-* Requires that the data first be sorted, but
-then:
-
-
-* Best case: O(1)
-
-* Average case: O(log n)
-
-* Worst case: O(log n)
-
-15
-
+    * Worst case: `O(log n)`
 
 ## Sorting algorithms
+
+There are many sorting algorithms and this is a worthy area of study.  Here are
+few examples of names of sorting algorithms:
 
 * Quicksort
 
@@ -634,589 +596,331 @@ then:
 
 * Etc.
 
-16
+The internet is full of examples of how sorting algorithms work
 
+* <http://www.youtube.com/watch?v=lyZQPjUT5B4>
 
-## Bubble sort
-
-http://www.youtube.com/watch?v=lyZQPjUT5B4
-
-
-For more examples:
-
-http://www.youtube.com/user/AlgoRythmics
-
-
-17
+* <http://www.youtube.com/user/AlgoRythmics>
 
 
 ## Sorting algorithms
 
-Name
+![sorting algo table](lecture-5/sorting-algo-table.png)
 
-
-Best
-
-
-Average
-
-
-Worst
-
-
-Memory
-
-
-Stable
-
-
-Quicksort
-
-
-n log n
-
-
-n log n
-
-
-n2
-
-
-Average log n,
-worst n
-
-
-Usually not
-
-
-
-
-Merge sort
-
-
-n log n
-
-
-n log n
-
-
-n log n
-
-
-Worst n
-
-
-Yes
-
-
-Heapsort
-
-
-n log n
-
-
-n log n
-
-
-n log n
-
-
-1
-
-
-No
-
-
-Bubble sort
-
-
-n
-
-
-n2
-
-
-n2
-
-
-1
-
-
-Yes
-
-
-http://en.wikipedia.org/wiki/Sorting_algorithms#Comparison_of_algorithms
-
-18
-
+See: <https://en.wikipedia.org/wiki/Sorting_algorithm#Comparison_of_algorithms>
 
 ## Finding the maximum
 
-What's the order of the algorithm to find
-the maximum value in an unordered list?
-
-
-17
-
-
-1325
-
-
--3
-
-
-346
-
-
-73
-
-
-19
-
-
-999
-
-
-120
-
-
-0
-
-
-## Maximum via sorting
-
-* Sort the list ascending / descending and take
-the last / first value
-
-
-* Cost of the algorithm will be the cost of the
-
-sorting plus one more operation to take the
-last / first value
-
-
-* Sorting algorithms are typically O(n log n) or
-O(n2)
-
-
-* Overall order of algorithm will clearly be the
-order of the sorting algorithm
-
-20
-
-
-## Maximum via linear search
-
-17
-
-
-1325
-
-
--3
-
-
-346
-
-
-73
-
-
-999
-
-
-120
-
-
-0
-
-
-Is this the maximum value I've seen so far?
-
-17
-
-
-1325
-
-
--3
-
-
-346
-
-
-73
-
-
-999
-
-
-120
-
-
-0
-
-
-Is this the maximum value I've seen so far?
-
-17
-
-
-1325
-
-
--3
-
-
-346
-
-
-73
-
-
-999
-
-
-120
-
-
-0
-
-
-Is this the maximum value I've seen so far?
-
-21
-
+What's the order of the algorithm to find the maximum value in an *unordered*
+list?
+
+```
+|----+------+----+-----+----+----+-----+-----+---|
+| 17 | 1325 | -3 | 346 | 73 | 19 | 999 | 120 | 0 |
+|----+------+----+-----+----+----+-----+-----+---|
+```
+
+### Idea: let's sort
+
+* Sort the list ascending / descending and take the last / first value
+
+* Cost of the algorithm will be the cost of the sorting plus one more operation
+to take the last / first value
+
+* Sorting algorithms are typically `O(n log n)` or `O(n^2)`
+
+* Overall order of algorithm will clearly be the order of the sorting algorithm
+
+### Idea: linear search
+
+Algorithm:
+
+* scan through the list sequentially
+* keep track of max element seen so far
+* compare each element and update if needed
+
+Step 1:
+
+```
+|----+------+----+-----+----+----+-----+-----+---|
+| 17 | 1325 | -3 | 346 | 73 | 19 | 999 | 120 | 0 |
+|----+------+----+-----+----+----+-----+-----+---|
+  ^
+  |
+ 17
+```
+
+Step 2: move to next element, compare and update
+
+```
+|----+------+----+-----+----+----+-----+-----+---|
+| 17 | 1325 | -3 | 346 | 73 | 19 | 999 | 120 | 0 |
+|----+------+----+-----+----+----+-----+-----+---|
+         ^
+         |
+       1325
+```
+
+Repeat:
+
+```
+|----+------+----+-----+----+----+-----+-----+---|
+| 17 | 1325 | -3 | 346 | 73 | 19 | 999 | 120 | 0 |
+|----+------+----+-----+----+----+-----+-----+---|
+              ^
+              |
+            1325
+```
+
+And so on:
+
+```
+|----+------+----+-----+----+----+-----+-----+---|
+| 17 | 1325 | -3 | 346 | 73 | 19 | 999 | 120 | 0 |
+|----+------+----+-----+----+----+-----+-----+---|
+                                               ^
+                                               |
+                                             1325
+```
+
+Question: what is the order of this algorithm?
 
 ## Two largest values
 
-* What's the complexity to find the two largest
-values in an unordered list of n values?
-
-
-22
-
+* What's the complexity to find the two largest values in an *unordered* list of `n`
+values?
 
 ## Two largest values
 
-17
+Now we need to keep track of two values during the traverse of the list.  We
+will also need to sort the pair of numbers that we keep along the way.
 
+Start by looking at the first two elements:
 
-73
+```
+|----+----+-----+-----+----+------+-----+---|
+| 17 | 73 | 417 | 346 | 73 | 1325 | 120 | 0 |
+|----+----+-----+-----+----+------+-----+---|
+ ^    ^
+ |    |
+(17,  73)
+(73,  17) <- sorted
+```
 
+Move down by one:
 
-417
+```
+|----+----+-----+-----+----+------+-----+---|
+| 17 | 73 | 417 | 346 | 73 | 1325 | 120 | 0 |
+|----+----+-----+-----+----+------+-----+---|
+      ^    ^
+      |    |
+     (73,  417)
+     (417,  73) <- sorted
+```
 
- 346
+Repeat:
 
+```
+|----+----+-----+-----+----+------+-----+---|
+| 17 | 73 | 417 | 346 | 73 | 1325 | 120 | 0 |
+|----+----+-----+-----+----+------+-----+---|
+           ^     ^
+           |     |
+          (417,  346)
+          (417,  346) <- sorted
+```
 
-73
+Repeat (in this case no update is needed):
 
- 1325
+```
+|----+----+-----+-----+----+------+-----+---|
+| 17 | 73 | 417 | 346 | 73 | 1325 | 120 | 0 |
+|----+----+-----+-----+----+------+-----+---|
+                 ^     ^
+                 |     |
+                (417,  346)
+                (417,  346) <- sorted
+```
 
- 120
+Notes:
 
+* For each of n input elements you will do a comparison, potentially a
+replacement, and a sort
 
-0
+* Time complexity is `O(n)`
 
+Question:
 
-17
+* Does that mean that finding the two largest values will take the same amount
+of time as finding the single largest value?
 
+## `m` largest values
 
-73
+What if I want to find the `m` largest values in an unordered list of `n`
+elements?
 
+This is an example of a more complicated algorithm.  We have two components to
+consider:
 
-Sort
+* the length of the list `n`
 
+* number number of largest values that we want `m`
 
-> ?
+Thus, it may not be appropriate to characterize an algorithm in terms of one
+parameter `n`:
 
-17
+* Time complexity for finding the `m` largest values in an unordered list of `n`
+elements could be characterized as `O(n m log m)` for a sorting algorithm that
+is `O(m log m)`
 
-
-73
-
-
-417
-
- 346
-
-
-73
-
- 1325
-
- 120
-
-
-0
-
-
-73
-
-
-17
-
-
-73
-
-
-417
-
-
-Sort
-
-417
-
-
-73
-
-
-...
-
-1325
-
- 417
-
-23
-
-
-## Two largest values
-
-* For each of n input elements you will do a
-
-comparison, potentially a replacement, and a sort
-
-
-* Time complexity is O(n)
-
-
-* Does that mean that finding the two largest
-values will take the same amount of time as
-finding the single largest value?
-
-
-24
-
-
-## m largest values
-
-* What if I want to find the m largest values
-in an unordered list of n elements?
-
-
-25
-
-
-## More complicated algorithms
-
-
-* May not be appropriate to characterize an
-algorithm in terms of one parameter n
-
-
-* Time complexity for finding the m largest
-
-values in an unordered list of n elements
-could be characterized as O(n m log m) for
-a sorting algorithm that is O(m log m)
-
+Question:
 
 * For what m is it better just to sort the list?
 
-26
+## Finding sub-strings
 
+Important procedure.  We are using it in homework 1.
 
-## Finding substrings
+Example:
 
+```
 TGTAGAATCACTTGAAAGGCGCGCAGTCTGGGGCGCTAGTCGTGGT
-
-CTTGAAAGG
-
-
-* String has length m, and substring has length n
-
-* Algorithms could vary
-
-* O(mn) for a naive implementation
-
-* O(m) for typical algorithms
-
-* O(n) for a search that uses the BurrowsWheeler transform
+          CTTGAAAGG
+          ^       ^
+          |       |
+```
 
 
-27
+* String has length `m`, and sub-string has length `n`
 
+* Different algorithms:
 
-## List operations
+    * `O(mn)` for a naive implementation
 
->>> a = []!
->>> a.append(42)!
->>> a!
-[42]!
->>> a.insert(0, 7)!
->>> a!
-[7, 42]!
->>> a.insert(1, 19)!
->>> a!
-[7, 19, 42]!
->>> !
-28
+    * `O(m)` for typical algorithms
 
+    * `O(n)` for a search that uses the Burrows-Wheeler transform
 
-## Python lists use contiguous storage
+## List operations in Python
 
-42!
+```
+>>> a = []
+>>> a.append(42)
+>>> a
+[42]
+>>> a.insert(0, 7)
+>>> a
+[7, 42]
+>>> a.insert(1, 19)
+>>> a
+[7, 19, 42]
+>>>
+```
 
-?!
+Python lists use contiguous storage.  As we are inserting into the list, the
+memory layout will look something like:
 
-?!
+```
+>>> a.append(42)
 
-?!
+|----+---+---+---|
+| 42 | ? | ? | ? |
+|----+---+---+---|
 
-7!
+>>> a.insert(0, 7)
 
-42!
+|---+----+---+---|
+| 7 | 42 | ? | ? |
+|---+----+---+---|
 
-?!
+>>> a.insert(1, 19)
 
-?!
+|---+----+----+---|
+| 7 | 19 | 42 | ? |
+|---+----+----+---|
 
-7!
+```
 
-19!
+## List vs Set in python
 
-42!
+Let's compare Python's list and set objects for a few operations:
 
-?!
+Create a file `loadnames.py`
 
-29
+```
+names_list = []
+names_set = set([])
+f = open('dist.female.first')
+for line in f:
+    name = line.split()[0]
+    names_list.append(name)
+    names_set.add(name)
+f.close()
+```
 
+Run the script and enter into the interpreter:
 
-## List access
+```
+$ python -i loadnames.py
+>>> 'JANE' in names_list
+True
+>>> 'LELAND' in names_list
+False
+>>> 'JANE' in names_set
+True
+>>> 'LELAND' in names_set
+False
+>>>
+```
 
-* What is the time complexity to access the
-ith element of a list with n elements?
-
-
-30
-
-
-## List access
-
-
-Start
-
-
-Location of ith element
-
-
-Computing the location of the ith
-element is independent of n, so O(1)
-
-
-31
-
-
-## Which is better? And why?
-
-names_list = []!
-names_set = set([])!
-f = open('dist.female.first')!
-for line in f:!
-name = line.split()[0]!
-names_list.append(name)!
-names_set.add(name)!
-f.close()!
-loadnames.py!
-plegresl@corn16:~/CME211/Lecture05$ python -i loadnames.py !
->>> 'JANE' in names_list!
-True!
->>> 'LELAND' in names_list!
-False!
->>> 'JANE' in names_set !
-True!
->>> 'LELAND' in names_set!
-False!
->>> !
-32
-
-!
+Which container is better for insertion and existence testing?
 
 ## Documentation
 
+![time complexity](lecture-5/time-complexity.png)
 
-https://wiki.python.org/moin/TimeComplexity
+<https://wiki.python.org/moin/TimeComplexity>
 
-33
+### List operations
 
+![list](lecture-5/list.png)
 
-## List operations
+### Set operations
 
-
-34
-
-
-## Set operations
-
-
-35
-
+![set](lecture-5/set.png)
 
 ## Dictionary operations
 
-
-36
-
+![dict](lecture-5/dict.png)
 
 ## Space complexity
 
-* What additional storage will I need during
-execution of the algorithm?
-
+* What additional storage will I need during execution of the algorithm?
 
 * Doesn't include the input or output data
 
-* Really just refers to temporary data structures
-which have the life of the algorithm
+* Really just refers to temporary data structures which have the life of the
+algorithm
 
-
-* Process for determining the space complexity
-is analogous to determining time complexity
-
-
-37
-
+* Process for determining the space complexity is analogous to determining time
+complexity
 
 ## Complexity analysis
 
+* Good framework for comparing *algorithms*
 
-* Good framework for comparing algorithms
-
-* Understanding individual algorithms will help you
-
-understand performance of an application made up of
-multiple algorithms
-
+* Understanding individual algorithms will help you understand performance of an
+application made up of multiple algorithms
 
 * Also important for understanding data structures
 
 * Caveats:
 
-*
-*
-*
-*
+    * There is no standard definition of what constitutes an operation
 
-There is no standard definition of what constitutes an operation
+    * It's an asymptotic limit for large n
 
-It's an asymptotic limit for large n
+    * Says nothing about the constants
 
-Says nothing about the constants
-
-May make assumptions about dataset (random distribution, etc.)
-
-38
-
-
-## 
+    * May make assumptions about dataset (random distribution, etc.)
