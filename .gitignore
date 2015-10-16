@@ -1,0 +1,4 @@
+*.pyc
+/output.txt
+/examples/ngrams/t8.shakespeare.txt
+*.ipynb_checkpoints*
